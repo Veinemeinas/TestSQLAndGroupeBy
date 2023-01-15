@@ -7,12 +7,15 @@ namespace TestSQL.Repositories
 {
     internal class CustomerRepository
     {
-        public List<CustomerOrder> GetCustomers()
+        public List<CustomerOrder> GetCustomers(Query querys = null)
         {
             List<CustomerOrder> data = new List<CustomerOrder>();
+            string customerId = querys.Parameters["CustomerId"].ToString();
+
+            var customerQuery = string.IsNullOrEmpty(customerId) ? "" : @"WHERE c.CustomerID = @CustomerId";
 
             string connectionString = "Server=localhost;Database=W3School;Trusted_Connection=True;TrustServerCertificate=True;";
-            string query = @"SELECT c.CustomerID,
+            string query = @$"SELECT c.CustomerID,
 	                                c.CustomerName,
 	                                c.ContactName,
                                     c.Address,
@@ -27,6 +30,7 @@ namespace TestSQL.Repositories
                             JOIN orders o ON c.CustomerID = o.CustomerID
                             JOIN Order_details od ON o.OrderId = od.OrderId
                             JOIN Products p ON od.ProductID = p.ProductID
+                            {customerQuery}
                             ORDER BY c.CustomerID";
 
             try
@@ -36,6 +40,8 @@ namespace TestSQL.Repositories
                     sqlConnection.Open();
                     using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
                     {
+                        sqlCommand.Parameters.Add(new SqlParameter("@CustomerId", querys.Parameters["CustomerId"]));
+                        //sqlCommand.Parameters.AddWithValue("@CustomerId", querys.Parameters["CustomerId"].ToString());
                         SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
 
                         while (sqlDataReader.Read())

@@ -5,7 +5,16 @@ using TestSQL.Repositories;
 
 Console.WriteLine("Program start...\n");
 CustomerRepository customerRepository = new CustomerRepository();
-List<Customer> data = customerRepository.GetCustomers().ToCustomerList();
+
+Query query = new Query()
+{
+    Parameters = new Dictionary<string, object>
+    {
+        { "CustomerId", 2 }
+    }
+};
+
+List<Customer> data = customerRepository.GetCustomers(query).ToCustomerList();
 data.PrintToScreen();
 Console.WriteLine("Program finished...");
 Console.ReadLine();
