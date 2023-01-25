@@ -4,6 +4,7 @@ using TestSQL.Models;
 using TestSQL.Repositories;
 
 Console.WriteLine("Program start...\n");
+List<Customer> customers = new List<Customer>();
 CustomerRepository customerRepository = new CustomerRepository();
 
 Query query = new Query()
@@ -14,7 +15,16 @@ Query query = new Query()
     }
 };
 
-List<Customer> data = customerRepository.GetCustomers(query).ToCustomerList();
-data.PrintToScreen();
+try
+{
+    customers = customerRepository.GetCustomers(query).ToCustomerList();
+}
+catch (Exception e)
+{
+    Console.WriteLine(e.Message);
+    return;
+}
+
+customers.PrintToScreen();
 Console.WriteLine("Program finished...");
 Console.ReadLine();

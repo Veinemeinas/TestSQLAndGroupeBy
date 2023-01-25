@@ -7,10 +7,10 @@ namespace TestSQL.Repositories
 {
     internal class CustomerRepository
     {
-        public List<CustomerOrder> GetCustomers(Query querys = null)
+        public List<CustomerOrder> GetCustomers(Query queryParam = null)
         {
             List<CustomerOrder> data = new List<CustomerOrder>();
-            string customerId = querys.Parameters["CustomerId"].ToString();
+            string customerId = queryParam?.Parameters["CustomerId"].ToString();
 
             var customerQuery = string.IsNullOrEmpty(customerId) ? "" : @"WHERE c.CustomerID = @CustomerId";
 
@@ -40,8 +40,8 @@ namespace TestSQL.Repositories
                     sqlConnection.Open();
                     using (SqlCommand sqlCommand = new SqlCommand(query, sqlConnection))
                     {
-                        sqlCommand.Parameters.Add(new SqlParameter("@CustomerId", querys.Parameters["CustomerId"]));
-                        //sqlCommand.Parameters.AddWithValue("@CustomerId", querys.Parameters["CustomerId"].ToString());
+                        sqlCommand.Parameters.Add(new SqlParameter("@CustomerId", queryParam?.Parameters["CustomerId"]));
+                        //sqlCommand.Parameters.AddWithValue("@CustomerId", queryParam?.Parameters["CustomerId"].ToString());
                         SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
 
                         while (sqlDataReader.Read())
@@ -64,9 +64,9 @@ namespace TestSQL.Repositories
                     }
                 }
             }
-            catch (Exception e)
+            catch
             {
-                Console.WriteLine(e.Message);
+                throw;
             }
 
             return data;
